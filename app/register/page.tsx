@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const [returnTo, setReturnTo] = useState<string | null>(null)
   const [roomCode, setRoomCode] = useState<string | null>(null)
   const [redirecting, setRedirecting] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const { register, loading, error, clearError, user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -83,31 +84,36 @@ export default function RegisterPage() {
     e.preventDefault()
     clearError()
     setPasswordError(null)
+    setSubmitting(true)
 
     if (!name || !email || !password || !confirmPassword) {
+      setSubmitting(false)
       return
     }
 
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match")
+      setSubmitting(false)
       return
     }
 
     if (password.length < 8) {
       setPasswordError("Password must be at least 8 characters long")
+      setSubmitting(false)
       return
     }
 
     console.log("🔐 Submitting registration")
     await register(name, email, password)
+    setSubmitting(false)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-purple-200 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md shadow-xl border border-gray-200 rounded-2xl bg-white">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-3xl font-extrabold text-center text-purple-700">Create an account</CardTitle>
+          <CardDescription className="text-center text-gray-600">
             Enter your details to create a DiceyDecisions account
             {roomCode && (
               <div className="mt-2 text-sm font-medium text-purple-600">
@@ -126,7 +132,7 @@ export default function RegisterPage() {
               <p className="text-gray-600">{redirecting ? "Redirecting..." : "Creating your account..."}</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-start">
                   <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
@@ -134,7 +140,7 @@ export default function RegisterPage() {
                 </div>
               )}
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
+                <label htmlFor="name" className="text-sm font-medium text-gray-700">
                   Name
                 </label>
                 <Input
@@ -143,10 +149,11 @@ export default function RegisterPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
                   required
+                  className="rounded-lg border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700">
                   Email
                 </label>
                 <Input
@@ -156,10 +163,11 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your.email@example.com"
                   required
+                  className="rounded-lg border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700">
                   Password
                 </label>
                 <Input
@@ -169,10 +177,11 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  className="rounded-lg border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
                   Confirm Password
                 </label>
                 <Input
@@ -182,22 +191,30 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  className="rounded-lg border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition"
                 />
                 {passwordError && <p className="text-sm text-red-600 mt-1">{passwordError}</p>}
               </div>
-              <Button type="submit" className="w-full" disabled={loading || redirecting}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              <Button
+                type="submit"
+                className={cn(
+                  "w-full py-2 rounded-lg font-semibold bg-purple-600 hover:bg-purple-700 transition text-white flex items-center justify-center",
+                  (loading || submitting) && "opacity-70 cursor-not-allowed"
+                )}
+                disabled={loading || redirecting || submitting}
+              >
+                {(loading || submitting) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Create account
               </Button>
             </form>
           )}
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <div className="text-sm text-center">
+          <div className="text-sm text-center text-gray-600">
             Already have an account?{" "}
             <Link
               href={roomCode ? `/login?return_to=/rooms/join&room_code=${roomCode}` : "/login"}
-              className="text-purple-600 hover:text-purple-500 font-medium"
+              className="text-purple-600 hover:text-purple-500 font-medium transition"
             >
               Sign in
             </Link>

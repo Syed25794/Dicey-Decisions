@@ -56,31 +56,42 @@ export function DeleteRoomDialog({ roomId, roomTitle }: DeleteRoomDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-red-500 hover:bg-red-50 hover:text-red-600">
-          <Trash2 className="h-4 w-4 mr-2" />
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors rounded-lg font-semibold flex items-center gap-2"
+        >
+          <Trash2 className="h-4 w-4 mr-1" />
           Delete Room
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md rounded-2xl shadow-2xl border border-red-100 bg-white">
         <DialogHeader>
-          <div className="flex items-center gap-2 text-red-500">
+          <div className="flex items-center gap-2 text-red-600 mb-1">
             <AlertTriangle className="h-5 w-5" />
-            <DialogTitle>Delete Room</DialogTitle>
+            <DialogTitle className="text-lg font-bold">Delete Room</DialogTitle>
           </div>
-          <DialogDescription>
-            Are you sure you want to delete <span className="font-medium">"{roomTitle}"</span>? This action cannot be
-            undone.
+          <DialogDescription className="text-gray-700">
+            Are you sure you want to delete <span className="font-semibold text-gray-900">"{roomTitle}"</span>?
+            <span className="text-red-500 font-medium">This action cannot be undone.</span>
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-4">
-          <Button variant="outline" onClick={() => setIsOpen(false)} className="sm:w-auto w-full">
+        <DialogFooter className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            className="sm:w-auto w-full rounded-lg border-gray-300 hover:bg-gray-100 transition"
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} className="sm:w-auto w-full">
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="sm:w-auto w-full rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition flex items-center justify-center"
+          >
             {isDeleting ? (
-              <>
-                <span className="animate-pulse">Deleting...</span>
-              </>
+              <span className="animate-pulse">Deleting...</span>
             ) : (
               <>Delete Room</>
             )}
