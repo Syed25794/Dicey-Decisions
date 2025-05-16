@@ -7,7 +7,7 @@ import { generateVerificationToken } from "./auth"
 // For production, use a real email service
 // For development, you can use services like Mailtrap or Ethereal
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.ethereal.email",
+  host: process.env.EMAIL_HOST || "smtp.gmail.com",
   port: Number.parseInt(process.env.EMAIL_PORT || "587"),
   secure: process.env.EMAIL_SECURE === "true",
   auth: {
