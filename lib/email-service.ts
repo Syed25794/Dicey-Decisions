@@ -15,6 +15,15 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD || "",
   },
 })
+console.log({
+  host: process.env.EMAIL_HOST || "smtp.ethereal.email123",
+  port: Number.parseInt(process.env.EMAIL_PORT || "587"),
+  secure: process.env.EMAIL_SECURE === "true",
+  auth: {
+    user: process.env.EMAIL_USER || "",
+    pass: process.env.EMAIL_PASSWORD || "",
+  },
+})
 
 export async function sendVerificationEmail(email: string, name: string) {
   // Generate a verification token
@@ -22,6 +31,7 @@ export async function sendVerificationEmail(email: string, name: string) {
 
   // Create verification URL
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  console.log("baseUrl", baseUrl)
   const verificationUrl = `${baseUrl}/verify-email?token=${token}`
 
   // Email content
